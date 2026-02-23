@@ -1,0 +1,27 @@
+* { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { margin: 0; background-color: #f4f6f8; color: #333; }
+
+.dashboard-container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+.header { background: #ff0000; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+.header h1 { margin: 0 0 5px 0; font-size: 24px; }
+.header p { margin: 0; opacity: 0.9; }
+
+.main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media(max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
+
+.card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+h2 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+
+form { display: flex; flex-direction: column; gap: 10px; }
+input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+button { padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
+.btn-primary { background: #000; }
+.btn-secondary { background: #ff0000; }
+
+.terminal { background: #1e1e1e; color: #00ff00; }
+.terminal h3 { color: #fff; margin-top: 0; }
+.log-window { font-family: monospace; font-size: 13px; line-height: 1.5; }
+
+.hlr-table { width: 100%; border-collapse: collapse; }
+.hlr-table th, .hlr-table td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+.status-badge.active { background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 12px; font-size: 12px; }
