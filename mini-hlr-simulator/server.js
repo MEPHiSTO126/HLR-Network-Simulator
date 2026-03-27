@@ -1,13 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const crypto = require('crypto'); // Add this to simulate the A3 Algorithm
+const crypto = require('crypto'); 
 const db = require('./database');
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // Allows the server to read JSON data
+app.use(express.json()); 
 
-// A simple test route to ensure the server is alive
+
 app.get('/api/network-status', (req, res) => {
     res.json({ 
         status: "Online", 
@@ -26,16 +26,15 @@ app.get('/api/hlr/subscribers', (req, res) => {
         res.json({ data: rows });
     });
 });
-// Route to Register a new SIM (Provisioning in HLR)
+// Route to Register a new SIM 
 app.post('/api/hlr/register', (req, res) => {
-    // We expect the frontend to send the phone number and the secret key
+   
     const { msisdn, ki_key } = req.body;
 
     if (!msisdn || !ki_key) {
         return res.status(400).json({ error: "MSISDN and ki_key are required." });
     }
 
-    // Generate a mock IMSI 
     // Airtel Nigeria's Mobile Country Code (MCC) is 621 and Network Code (MNC) is 20
     const imsi = "62120" + Math.floor(1000000000 + Math.random() * 9000000000).toString();
 
@@ -110,6 +109,53 @@ app.post('/api/hlr/authenticate', (req, res) => {
                 received: client_sres
             });
         }
+    });
+});
+// --- STEP 3: VLR Location Update ---
+app.post('/api/vlr/location', (req, res) => {
+    const { imsi, msc_id } = req.body;
+    
+    const sql = `INSERT INTO vlr_location (imsi, current_msc_id) VALUES (?, ?)`;
+    db.run(sql, [imsi, msc_id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: `Location updated to ${msc_id} for IMSI: ${imsi}` });
+    });
+});
+
+// --- STEP 4: Simulate Call & Billing (CDR) ---
+app.post('/api/msc/call', (req, res) => {
+    const { caller_imsi, receiver_msisdn, duration_seconds } = req.body;
+    
+    // Simple billing logic: 12 Kobo per second (0.12 Naira)
+    const cost = (duration_seconds * 0.12).toFixed(2);
+
+    // 1. Record the call in the CDR table
+    const cdrSql = `INSERT INTO call_records (caller_msisdn, receiver_msisdn, duration_seconds, cost) 
+                    SELECT msisdn, ?, ?, ? FROM subscribers WHERE imsi = ?`;
+    
+    db.run(cdrSql, [receiver_msisdn, duration_seconds, cost, caller_imsi], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+
+        // 2. Deduct the cost from the subscriber's balance
+        const billingSql = `UPDATE subscribers SET account_balance = account_balance - ? WHERE imsi = ?`;
+        db.run(billingSql, [cost, caller_imsi], function(updateErr) {
+            if (updateErr) return res.status(500).json({ error: updateErr.message });
+            
+            res.json({ 
+                message: "Call completed and billed.", 
+                duration: duration_seconds,
+                cost_deducted: cost
+            });
+        });
+    });
+});
+
+// --- Utility: Top Up Account Balance ---
+app.post('/api/hlr/topup', (req, res) => {
+    const { imsi, amount } = req.body;
+    db.run(`UPDATE subscribers SET account_balance = account_balance + ? WHERE imsi = ?`, [amount, imsi], (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: `Recharged ${amount} successfully.` });
     });
 });
 app.listen(PORT, () => {
