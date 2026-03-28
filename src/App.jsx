@@ -210,9 +210,9 @@ function App() {
           <div className="card terminal">
             <h3>Network Activity Log</h3>
             <div className="log-window">
-              {logs.length === 0
+              {logs?.length === 0
                 ? <div className="log-entry" style={{ color: '#2a5c3a' }}>Awaiting network events...</div>
-                : logs.map((log, i) => (
+                : logs?.map((log, i) => (
                     <div key={i} className="log-entry">{log}</div>
                   ))
               }
@@ -224,7 +224,7 @@ function App() {
         {/* ── RIGHT COLUMN ── */}
         <div className="data-panel card">
           <h2>Live HLR Database</h2>
-          {subscribers.length === 0 ? (
+          {subscribers?.length === 0 ? (
             <div className="empty-state">
               No subscribers registered yet.<br />Register a SIM to populate the database.
             </div>
@@ -238,7 +238,7 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {subscribers.map(sub => (
+                {subscribers?.map(sub => (
                   <tr key={sub.imsi}>
                     <td>{sub.imsi}</td>
                     <td>{sub.msisdn}</td>
