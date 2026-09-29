@@ -206,23 +206,12 @@ function App() {
             </form>
           </div>
 
-          {/* LOGS */}
-          <div className="card terminal">
-            <h3>Network Activity Log</h3>
-            <div className="log-window">
-              {logs?.length === 0
-                ? <div className="log-entry" style={{ color: '#2a5c3a' }}>Awaiting network events...</div>
-                : logs?.map((log, i) => (
-                    <div key={i} className="log-entry">{log}</div>
-                  ))
-              }
-            </div>
-          </div>
-
         </div>
 
         {/* ── RIGHT COLUMN ── */}
-        <div className="data-panel card">
+        <div className="side-panel">
+
+          <div className="data-panel card">
           <h2>Live HLR Database</h2>
           {subscribers?.length === 0 ? (
             <div className="empty-state">
@@ -250,6 +239,21 @@ function App() {
               </tbody>
             </table>
           )}
+          </div>
+
+          {/* LOGS */}
+          <div className="card terminal">
+            <h3>Network Activity Log</h3>
+            <div className="log-window">
+              {logs?.length === 0
+                ? <div className="log-entry" style={{ color: '#2a5c3a' }}>Awaiting network events...</div>
+                : logs?.map((log, i) => (
+                    <div key={i} className="log-entry">{log}</div>
+                  ))
+              }
+            </div>
+          </div>
+
         </div>
 
       </div>

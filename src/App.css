@@ -145,13 +145,31 @@ body::before {
 /* ── MAIN GRID ── */
 .main-grid {
   display: grid;
-  grid-template-columns: 420px 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 24px;
   align-items: start;
 }
 
+.control-panel,
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* keep outputs (db + log) in view while scrolling the forms */
+.side-panel {
+  position: sticky;
+  top: 24px;
+}
+
+@media (max-width: 1100px) {
+  .side-panel { position: static; }
+}
+
 @media (max-width: 900px) {
-  .main-grid { grid-template-columns: 1fr; }
+  .main-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ── CARDS ── */
@@ -160,7 +178,7 @@ body::before {
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 22px 24px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   position: relative;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -169,8 +187,6 @@ body::before {
   border-color: var(--border-bright);
   box-shadow: 0 0 20px rgba(0,100,200,0.08);
 }
-
-.card:last-child { margin-bottom: 0; }
 
 /* step number badge on cards */
 .card-header {
@@ -357,7 +373,8 @@ button::after {
   font-family: var(--mono);
   font-size: 12px;
   line-height: 1.7;
-  max-height: 220px;
+  max-height: clamp(240px, 42vh, 520px);
+  min-height: 180px;
   overflow-y: auto;
   padding-right: 6px;
 }
